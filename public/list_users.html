@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Usuarios</title>
+</head>
+<body>
+  <h2>Usuarios Registrados</h2>
+  <table border="1">
+    <thead>
+      <tr><th>ID</th><th>Usuario</th><th>Rol</th></tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+
+  <div style="text-align:center; margin-top:20px;">
+    <a href="/public/menu.html" style="padding:10px; background:#6c757d; color:white; text-decoration:none; border-radius:5px;">← Volver al menú</a>
+  </div>
+
+  <script>
+    async function cargarUsuarios() {
+      const res = await fetch("http://localhost:8080/users");
+      const usuarios = await res.json();
+      const tbody = document.getElementById("userTable");
+      usuarios.forEach(user => {
+        const fila = `<tr>
+          <td>${user.id}</td>
+          <td>${user.username}</td>
+          <td>${user.role}</td>
+        </tr>`;
+        tbody.innerHTML += fila;
+      });
+    }
+    cargarUsuarios();
+  </script>
+</body>
+</html>

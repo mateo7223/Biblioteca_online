@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Usuario</title>
+</head>
+<body>
+  <h2>Formulario de Registro de Usuario</h2>
+  <form id="registerForm">
+    <input type="text" id="username" placeholder="Usuario" required><br>
+    <input type="password" id="password" placeholder="Contraseña" required><br>
+    <select id="role" required>
+      <option value="">Rol</option>
+      <option value="Administrador">Administrador</option>
+      <option value="Lector">Lector</option>
+    </select><br>
+    <button type="submit">Registrar</button>
+  </form>
+  <div id="response"></div>
+
+  <div style="text-align:center; margin-top:20px;">
+    <a href="/public/menu.html" style="padding:10px; background:#6c757d; color:white; text-decoration:none; border-radius:5px;">← Volver al menú</a>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      const res = await fetch("http://localhost:8080/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, role })
+      });
+      const msg = await res.text();
+      document.getElementById('response').textContent = msg;
+    });
+  </script>
+</body>
+</html>
