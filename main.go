@@ -16,9 +16,13 @@ func main() {
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/public/", http.StripPrefix("/public/", fs))
 
-	// Agregar public de backend
 	http.Handle("/", routes.Router())
 
 	log.Println("Servidor en http://localhost:8080")
+
+	http.Handle("/uploads/",
+		http.StripPrefix("/uploads/",
+			http.FileServer(http.Dir("./uploads"))))
+
 	http.ListenAndServe(":8080", nil)
 }

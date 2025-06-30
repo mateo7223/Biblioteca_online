@@ -17,23 +17,26 @@
     <a href="/public/menu.html" style="padding:10px; background:#6c757d; color:white; text-decoration:none; border-radius:5px;">← Volver al menú</a>
   </div>
 
-  <script>
+<script>
     async function cargarLibros() {
-      const res = await fetch("http://localhost:8080/books");
+      const res   = await fetch("http://localhost:8080/books");
       const libros = await res.json();
       const tbody = document.getElementById("bookTable");
+
       libros.forEach(book => {
-        const fila = `<tr>
-        <td>${book.ID}</td>
-        <td>${book.Title}</td>
-        <td>${book.Author}</td>
-        <td>${book.Price}</td>
-        <td>${book.Stock}</td>
-        <td>${book.Available ? "Sí" : "No"}</td>
-      </tr>`;
+        const fila = `
+          <tr>
+            <td>${book.id}</td>
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.price}</td>
+            <td>${book.stock}</td>
+            <td>${book.available ? "Sí" : "No"}</td>
+          </tr>`;
         tbody.innerHTML += fila;
       });
     }
+
     cargarLibros();
   </script>
 </body>

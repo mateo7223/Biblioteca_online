@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Disminuir Stock</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 0 auto; }
+    label { display:block; margin-top: .8rem; }
+    #bookInfo { margin: 1rem 0; font-weight: 600; }
+    button { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>Disminuir Stock de un Libro</h2>
+
+  <form id="decForm">
+    <label>ID del libro:
+      <input type="number" id="decBookId" min="1" required>
+    </label>
+
+    <button type="button" id="consultBtn">Consultar</button>
+    <div id="bookInfo"></div>
+
+    <button type="submit">Disminuir en 1</button>
+  </form>
+
+  <p id="decMsg"></p>
+  <div style="text-align:center;margin-top:20px;">
+    <a href="/public/menu.html">Volver al menú</a>
+  </div>
+
+  <script>
+    const decBookId = document.getElementById("decBookId");
+    const bookInfo  = document.getElementById("bookInfo");
+    const decMsg    = document.getElementById("decMsg");
+
+    // CONSULTAR
+    document.getElementById("consultBtn").addEventListener("click", async () => {
+      const id = Number(decBookId.value);
+      if (!id) return;
+      const res = await fetch(`/books/${id}`);
+      if (!res.ok) {
+        bookInfo.textContent = "Libro no encontrado";
+        bookInfo.style.color = "red";
+        return;
+      }
+      const book = await res.json();
+      bookInfo.style.color = "black";
+      bookInfo.textContent = `Título: “${book.title}” — Stock: ${book.stock}`;
+    });
+
+    // DECREMENTAR
+    document.getElementById("decForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = Number(decBookId.value);
+      const res = await fetch(`/books/decrement?id=${id}`, { method: "POST" });
+
+      decMsg.style.color = res.ok ? "green" : "red";
+      decMsg.textContent = res.ok
+        ? "Stock disminuido"
+        : "Error al disminuir";
+      if (res.ok) document.getElementById("consultBtn").click(); // refresca
+    });
+  </script>
+</body>
+</html>

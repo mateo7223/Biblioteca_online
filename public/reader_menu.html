@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Menú Lector</title>
+</head>
+<body>
+  <h2>Menú Lector</h2>
+
+  <ul>
+    <li><a href="/public/purchase_book.html">Comprar Libro</a></li>
+    <li><a href="/public/my_purchases.html">Mis Compras</a></li>
+  </ul>
+
+  <button id="logoutBtn">Cerrar sesión</button>
+
+  <script>
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+
+      try { await fetch("/logout", { method: "POST" }); } catch (_) {}
+
+      location.href = "/public/login.html";
+    });
+  </script>
+</body>
+</html>

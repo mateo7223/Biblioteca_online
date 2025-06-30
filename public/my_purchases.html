@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis compras</title>
+</head>
+<body>
+  <h2>Mis compras</h2>
+
+  <table border="1">
+    <thead>
+      <tr><th>ID</th><th>Título</th><th>Autor</th><th>Cantidad</th><th>Total</th><th>Fecha</th></tr>
+    </thead>
+    <tbody id="pTable"></tbody>
+  </table>
+
+  <script>
+    const USER_ID = localStorage.getItem("user_id");
+
+    async function loadPurchases() {
+      const res  = await fetch(`/purchases?user_id=${USER_ID}`);
+      const list = await res.json();
+      const tbody = document.getElementById("pTable");
+
+      list.forEach(p => {
+        const row = `
+          <tr>
+            <td>${p.id}</td>
+            <td>${p.title}</td>
+            <td>${p.author}</td>
+            <td>${p.quantity}</td>
+            <td>${p.total.toFixed(2)}</td>
+            <td>${new Date(p.purchased_at).toLocaleString()}</td>
+            <!-- CELDA PDF ↓↓↓ -->
+            <td>
+              ${p.file_url
+              ? `<a href="${p.file_url}" target="_blank">Descargar</a>`
+              : '—'}
+            </td>
+            <!-- FIN CELDA PDF -->
+          </tr>`;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
+    }
+
+    loadPurchases();
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Subir PDF de un Libro</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 0 auto; }
+    label { display:block; margin-top: .8rem; }
+    button { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>Subir PDF de un Libro</h2>
+
+  <form id="pdfForm" enctype="multipart/form-data">
+    <label>ID del libro:
+      <input type="number" id="bookId" min="1" required>
+    </label>
+
+    <label>Archivo PDF:
+      <input type="file" id="pdfFile" accept="application/pdf" required>
+    </label>
+
+    <button type="submit">Subir PDF</button>
+  </form>
+
+  <p id="msg"></p>
+  <div style="text-align:center;margin-top:20px;">
+    <a href="/public/menu.html">Volver al menú</a>
+  </div>
+
+  <script>
+    const form = document.getElementById("pdfForm");
+    const msg  = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id  = document.getElementById("bookId").value;
+      const pdf = document.getElementById("pdfFile").files[0];
+      const fd  = new FormData();
+      fd.append("file", pdf);
+
+      const res = await fetch(`/books/${id}/pdf`, {
+        method: "POST",
+        body: fd
+      });
+
+      msg.style.color = res.ok ? "green" : "red";
+      msg.textContent = res.ok
+        ? "PDF subido correctamente"
+        : "Error al subir PDF";
+      if (res.ok) form.reset();
+    });
+  </script>
+</body>
+</html>

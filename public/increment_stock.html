@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Incrementar Stock</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 0 auto; }
+    label { display:block; margin-top: .8rem; }
+    #bookInfo { margin: 1rem 0; font-weight: 600; }
+    button { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>Incrementar Stock de un Libro</h2>
+
+  <form id="incForm">
+    <label>ID del libro:
+      <input type="number" id="incBookId" min="1" required>
+    </label>
+
+    <button type="button" id="consultBtn">Consultar</button>
+    <div id="bookInfo"></div>
+
+    <label>Cantidad a aumentar:
+      <input type="number" id="incAmount" min="1" value="1" required>
+    </label>
+
+    <button type="submit">Incrementar</button>
+  </form>
+
+  <p id="incMsg"></p>
+  <div style="text-align:center;margin-top:20px;">
+    <a href="/public/menu.html">Volver al menú</a>
+  </div>
+
+  <script>
+    const incBookId = document.getElementById("incBookId");
+    const bookInfo  = document.getElementById("bookInfo");
+    const incMsg    = document.getElementById("incMsg");
+
+    // CONSULTAR
+    document.getElementById("consultBtn").addEventListener("click", async () => {
+      const id = Number(incBookId.value);
+      if (!id) return;
+      const res = await fetch(`/books/${id}`);
+      if (!res.ok) {
+        bookInfo.textContent = "Libro no encontrado";
+        bookInfo.style.color = "red";
+        return;
+      }
+      const book = await res.json();
+      bookInfo.style.color = "black";
+      bookInfo.textContent = `Título: “${book.title}” — Stock: ${book.stock}`;
+    });
+
+    // INCREMENTAR
+    document.getElementById("incForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id     = Number(incBookId.value);
+      const amount = Number(document.getElementById("incAmount").value);
+
+      const res = await fetch("/books/increment", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ id, amount })
+      });
+
+      incMsg.style.color = res.ok ? "green" : "red";
+      incMsg.textContent = res.ok
+        ? "Stock incrementado"
+        : "Error al incrementar";
+      if (res.ok) document.getElementById("consultBtn").click(); // refresca
+    });
+  </script>
+</body>
+</html>

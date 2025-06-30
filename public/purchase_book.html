@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Comprar libro</title>
+</head>
+<body>
+  <h2>Comprar libro</h2>
+
+  <!-- Botón para regresar al menú del lector -->
+  <p>
+    <button onclick="location.href='/public/reader_menu.html'">
+      Volver al menú
+    </button>
+  </p>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th><th>Título</th><th>Autor</th>
+        <th>Precio</th><th>Stock</th><th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="bookTable"></tbody>
+  </table>
+
+  <script>
+    //  Guarda el id del lector en localStorage cuando hagas login
+    const USER_ID = localStorage.getItem("user_id");
+
+    async function loadBooks() {
+      const res   = await fetch("http://localhost:8080/books");
+      const books = await res.json();
+      const tbody = document.getElementById("bookTable");
+
+      books.forEach(b => {
+        const row = `
+          <tr>
+            <td>${b.id}</td>
+            <td>${b.title}</td>
+            <td>${b.author}</td>
+            <td>${b.price.toFixed(2)}</td>
+            <td>${b.stock}</td>
+            <td>
+              <button onclick="buy(${b.id})" ${b.stock === 0 ? "disabled" : ""}>
+                Comprar
+              </button>
+            </td>
+          </tr>`;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
+    }
+
+    async function buy(bookID) {
+      const quantity = 1;
+      const res = await fetch("http://localhost:8080/purchases", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ user_id: Number(USER_ID), book_id: bookID, quantity })
+      });
+
+      if (res.ok) {
+        alert("¡Compra exitosa!");
+        location.reload();
+      } else {
+        alert(await res.text());
+      }
+    }
+
+    loadBooks();
+  </script>
+</body>
+</html>
